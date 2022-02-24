@@ -4,17 +4,17 @@ clear screen
 
 -- Drops Section --
 
-drop table Specialty;
-drop table Insurance_Company;
-drop table Hospital;
-drop table Custumer;
-drop table Doctor;
-drop table Hospital_Specialty;
-drop table Doctor_Specialty;
-drop table Concert;
-drop table Product;
-drop table Contract;
 drop table Appointment;
+drop table Contract;
+drop table Product;
+drop table Concert;
+drop table Doctor_Specialty;
+drop table Hospital_Specialty;
+drop table Doctor;
+drop table Customer;
+drop table Hospital;
+drop table Insurance_Company;
+drop table Specialty;
 
 
 -- Tables Creation Section --
