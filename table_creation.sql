@@ -4,17 +4,17 @@ clear screen
 
 -- Drops Section --
 
-drop table Appointment;
-drop table Contract;
-drop table Costumer;
-drop table Product;
-drop table Concert;
-drop table Hospital;
-drop table Doctor_Specialty;
-drop table Doctor;
-drop table Insurance_Company;
-drop table Hospital_Specialty;
 drop table Specialty;
+drop table Insurance_Company;
+drop table Hospital;
+drop table Custumer;
+drop table Doctor;
+drop table Hospital_Specialty;
+drop table Doctor_Specialty;
+drop table Concert;
+drop table Product;
+drop table Contract;
+drop table Appointment;
 
 
 -- Tables Creation Section --
@@ -86,10 +86,10 @@ create table Doctor(
     
     constraint PK_doctor primary key(collegiate),
     
-    constraint UK_doctor unique(locator),
-    constraint UK_doctor unique(id),
+    constraint UK_doctor_locator unique(locator),
+    constraint UK_doctor_id unique(id),
 
-    constraint FK_doctor foreign key(hospital_cif) references Hospital(cif)
+    constraint FK_doctor_hospital_cif foreign key(hospital_cif) references Hospital(cif)
 );
 
 
@@ -99,19 +99,19 @@ create table Hospital_Specialty(
 
     constraint PK_hospital_specialty primary key(hospital, specialty),
 
-    constraint FK_hospital_specialty foreign key(hospital_cif) references Hospitals(name) on delete cascade,
-    constraint FK_hospital_specialty foreign key(specialty_name) references Specialty(name) on delete cascade
+    constraint FK_hospital_specialty_hospital_cif foreign key(hospital_cif) references Hospital(cif) on delete cascade,
+    constraint FK_hospital_specialty_specialty_name foreign key(specialty_name) references Specialty(name) on delete cascade
 );
 
 
 create table Doctor_Specialty(
-    doctor varchar2(12), 
-    specialty varchar2(50) not null,
+    doctor_name varchar2(12), 
+    specialty_name varchar2(50) not null,
 
     constraint PK_doctor_specialty primary key(doctor, specialty),
     
-    constraint FK_doctor_specialty foreign key(doctor) references Doctor(name) on delete cascade,
-    constraint FK_doctor_specialty foreign key(specialty) references Specialty(name) on delete cascade
+    constraint FK_doctor_specialty_doctor_name foreign key(doctor_name) references Doctor(name) on delete cascade,
+    constraint FK_doctor_specialty_specialty_name foreign key(specialty_name) references Specialty(name) on delete cascade
 );
 
 
@@ -121,10 +121,10 @@ create table Concert(
     start_date date,
     end_date not null,
     
-    constraint PK_concert primary key (insurance_cif, hospital_cif, start_date),
+    constraint PK_concert primary key(insurance_cif, hospital_cif, start_date),
 
-    constraint FK_concert_insurance_cif foreign key (insurance_cif) references Insurance_Company(cif),
-    constraint FK_concert_hospital_cif foreign key (hospital_cif) references Hospital(cif)
+    constraint FK_concert_insurance_cif foreign key(insurance_cif) references Insurance_Company(cif),
+    constraint FK_concert_hospital_cif foreign key(hospital_cif) references Hospital(cif)
 );
 
 
@@ -154,7 +154,7 @@ create table Contract(
 
     constraint PK_Contract primary key(customer_id, product),
 
-    constraint FK_contract_customer foreign key(customer_id) references Customer(id),
+    constraint FK_contract_customer_id foreign key(customer_id) references Customer(id),
     constraint FK_contract_product_name foreign key(product_name) references Product(name) on delete cascade,
     constraint FK_contract_product_specialty foreign key(product_specialty) references Product(specialty) on delete cascade
 );
@@ -174,7 +174,7 @@ create table Appointment(
     constraint PK_appointment primary key(doctor, client_id, date, time, hospital_cif, specialty_name)
 
     constraint FK_appointment_doctor_cif foreign key(doctor_cif) references Doctor(cif),
-    constraint FK_appointment_client_id foreign key (client_id) references Customer(id),
-    constraint FK_appointment_hospital_cif foreign key (hospital_cif) references Hospital(cif),
-    constraint FK_appointment_contract_product_specialty foreign key (contract_product_specialty) references Contract(product_specialty)
+    constraint FK_appointment_client_id foreign key(client_id) references Customer(id),
+    constraint FK_appointment_hospital_cif foreign key(hospital_cif) references Hospital(cif),
+    constraint FK_appointment_contract_product_specialty foreign key(contract_product_specialty) references Contract(product_specialty)
 );
