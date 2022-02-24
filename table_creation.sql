@@ -43,7 +43,11 @@ create table Insurance_Company(
     constraint UK_insurance_company_address unique(address),
     constraint UK_insurance_company_telephone unique(telephone),
     constraint UK_insurance_company_email unique(email),
-    constraint UK_insurance_company_url unique(url)
+    constraint UK_insurance_company_url unique(url),
+
+    constraint CH_insurance_company_cif check (cif > 0),
+    constraint CH_insurance_company_zip check (zip > 0),
+    constraint CH_insurance_company_telephone check (telephone > 0)
 );
 
 
@@ -57,7 +61,11 @@ create table Hospital(
     zip number(5) not null,
     telephone number(13) not null,
 
-    constraint PK_hospital primary key(cif)
+    constraint PK_hospital primary key(cif),
+
+    constraint CH_hospital_cif check (cif > 0),
+    constraint CH_hospital_zip check (zip > 0),
+    constraint CH_hospital_telephone check (telephone > 0)
 );
 
 
@@ -71,7 +79,9 @@ create table Customer(
 
     constraint PK_customer primary key(id),
     
-    constraint UK_Customer_email unique(email)
+    constraint UK_Customer_email unique(email),
+
+    constraint CH_customer_id check (id > 0)
 );
 
 
@@ -89,7 +99,10 @@ create table Doctor(
     constraint UK_doctor_locator unique(locator),
     constraint UK_doctor_id unique(id),
 
-    constraint FK_doctor_hospital_cif foreign key(hospital_cif) references Hospital(cif)
+    constraint FK_doctor_hospital_cif foreign key(hospital_cif) references Hospital(cif),
+
+    constraint CH_doctor_id check (id > 0),
+    constraint CH_doctor_locator check (locator > 0)
 );
 
 
@@ -124,7 +137,9 @@ create table Concert(
     constraint PK_concert primary key(insurance_cif, hospital_cif, start_date),
 
     constraint FK_concert_insurance_cif foreign key(insurance_cif) references Insurance_Company(cif),
-    constraint FK_concert_hospital_cif foreign key(hospital_cif) references Hospital(cif)
+    constraint FK_concert_hospital_cif foreign key(hospital_cif) references Hospital(cif),
+
+    constraint CH_concert_date check (end_date > start_date)
 );
 
 
@@ -135,11 +150,14 @@ create table Product(
     active varchar2(10),
     version number(4,2) not null,
     launch date not null,
-    retired date not null,
+    retired date,
 
     constraint PK_product primary key(name, specialty),
 
-    constraint FK_product_specialty foreign key(specialty) references Specialty(name) on delete cascade 
+    constraint FK_product_specialty foreign key(specialty) references Specialty(name) on delete cascade, 
+
+    constraint CH_product_version check (version > 0),
+    constraint CH_product_retired check (retired > launch)
 );
 
 
@@ -155,7 +173,11 @@ create table Contract(
     constraint PK_Contract primary key(customer_id, product_name, product_specialty),
 
     constraint FK_contract_customer_id foreign key(customer_id) references Customer(id),
-    constraint FK_contract_product_name foreign key(product_name, product_specialty) references Product(name, specialty) on delete cascade
+    constraint FK_contract_product_name foreign key(product_name, product_specialty) references Product(name, specialty) on delete cascade,
+
+    constraint CH_contract_date check (end_date > start_date),
+    constraint CH_contract_duration check (to_date(duration) = end_date - start_date),
+    constraint CH_contract_number_of_people check (number_of_people > 0)
 );
 
 
@@ -163,14 +185,13 @@ create table Appointment(
     doctor_collegiate varchar2(12),
     client_id varchar2(15),
     appointment_date date,
-    time number(4),
     hospital_cif varchar2(10),
     specialty_name varchar2(50),
     contract_customer_id varchar2(15),
     contract_product_name varchar2(50),
     contract_product_specialty varchar(50),
 
-    constraint PK_appointment primary key(doctor_collegiate, client_id, appointment_date, time, hospital_cif, specialty_name),
+    constraint PK_appointment primary key(doctor_collegiate, client_id, appointment_date, hospital_cif, specialty_name),
 
     constraint FK_appointment_doctor_collegiate foreign key(doctor_collegiate) references Doctor(collegiate),
     constraint FK_appointment_client_id foreign key(client_id) references Customer(id),
