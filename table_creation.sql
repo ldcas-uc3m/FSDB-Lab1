@@ -33,8 +33,8 @@ create table Insurance_Company(
     address varchar2(50) not null,
     city varchar2(35) not null,
     zip number(5) not null,
-    telephone number(13) not null,
-    email varchar2(60) not null,
+    telephone varchar2(14) not null,
+    email varchar2(30) not null,
     url varchar2(30) not null,
 
     constraint PK_insurance_company primary key(cif),
@@ -46,14 +46,13 @@ create table Insurance_Company(
     constraint UK_insurance_company_url unique(url),
 
     constraint CH_insurance_company_cif check (cif > 0),
-    constraint CH_insurance_company_zip check (zip > 0),
-    constraint CH_insurance_company_telephone check (telephone > 0)
+    constraint CH_insurance_company_zip check (zip > 0)
 );
 
 
 create table Hospital(
     name varchar2(50) not null,
-    cif  varchar2(10)not null,
+    cif  varchar2(10) not null,
     main_entrance varchar2(50) not null,
     emergency_entrance varchar2(50),
     city varchar2(35) not null,
@@ -72,26 +71,24 @@ create table Hospital(
 create table Customer(
     id varchar2(15),
     name varchar2(40) not null, 
-    surname1 varchar(25) not null,
-    surname2 varchar(25) not null, 
-    sex varchar(6) not null,
-    email varchar(60) not null,
+    surname1 varchar2(25) not null,
+    surname2 varchar2(25), 
+    sex varchar2(6) not null,
+    email varchar2(60) not null,
 
     constraint PK_customer primary key(id),
     
-    constraint UK_Customer_email unique(email),
-
-    constraint CH_customer_id check (id > 0)
+    constraint UK_Customer_email unique(email)
 );
 
 
 create table Doctor(
-    collegiate varchar(12) not null,
+    collegiate varchar2(12) not null,
     locator number(13) not null,
-    name varchar(40) not null,
+    name varchar2(40) not null,
     surname1 varchar2(25) not null, 
     surname2 varchar2(25),
-    id varchar(15) not null,
+    id varchar2(15) not null,
     hospital_cif varchar2(10),
     
     constraint PK_doctor primary key(collegiate),
@@ -147,7 +144,6 @@ create table Product(
     name varchar2(50),
     specialty varchar2(50), 
     wait_period varchar2(12) not null, 
-    active varchar2(10),
     version number(4,2) not null,
     launch date not null,
     retired date,
@@ -176,7 +172,6 @@ create table Contract(
     constraint FK_contract_product_name foreign key(product_name, product_specialty) references Product(name, specialty) on delete cascade,
 
     constraint CH_contract_date check (end_date > start_date),
-    constraint CH_contract_duration check (to_date(duration) = end_date - start_date),
     constraint CH_contract_number_of_people check (number_of_people > 0)
 );
 
@@ -189,7 +184,7 @@ create table Appointment(
     specialty_name varchar2(50),
     contract_customer_id varchar2(15),
     contract_product_name varchar2(50),
-    contract_product_specialty varchar(50),
+    contract_product_specialty varchar2(50),
 
     constraint PK_appointment primary key(doctor_collegiate, client_id, appointment_date, hospital_cif, specialty_name),
 
