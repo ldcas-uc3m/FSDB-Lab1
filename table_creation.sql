@@ -28,7 +28,7 @@ create table Specialty (
 
 
 create table Insurance_Company (
-    cif varchar2(10)         ,
+    cif varchar2(10),
     name varchar2(40) not null,
     address varchar2(50) not null,
     city varchar2(35) not null,
@@ -142,10 +142,12 @@ create table Product (
     version number(4,2) not null,
     launch date not null,
     retired date,
+    company_cif varchar2(10),
 
     constraint PK_product primary key(name, specialty),
 
     constraint FK_product_specialty foreign key(specialty) references Specialty(name) on delete cascade,
+    constraint FK_product_company_cif foreign key(company_cif) references Insurance_Company(cif),
 
     constraint CH_product_version check (version > 0),
     constraint CH_product_retired check (retired > launch)
