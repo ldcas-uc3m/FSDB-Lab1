@@ -138,7 +138,7 @@ create table Concert (
 create table Product (
     name varchar2(50),
     specialty varchar2(50), 
-    wait_period varchar2(12) not null, 
+    wait_period varchar2(12) not null,
     version number(4,2) not null,
     launch date not null,
     retired date,
@@ -179,14 +179,10 @@ create table Appointment (
     appointment_date date,
     hospital_name varchar2(50),
     specialty_name varchar2(50),
-    contract_customer_id varchar2(15),
-    contract_product_name varchar2(50),
-    contract_product_specialty varchar2(50),
 
     constraint PK_appointment primary key(doctor_collegiate, client_id, appointment_date, hospital_name, specialty_name),
     
     constraint FK_appointment_doctor_collegiate foreign key(doctor_collegiate) references Doctor(collegiate),
     constraint FK_appointment_client_id foreign key(client_id) references Customer(id),
     constraint FK_appointment_hospital_name foreign key(hospital_name) references Hospital(name),
-    constraint FK_appointment_contract foreign key(contract_customer_id, contract_product_name, contract_product_specialty) references Contract(customer_id, product_name, product_specialty)
 );
