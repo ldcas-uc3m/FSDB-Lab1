@@ -184,5 +184,5 @@ create table Appointment (
     
     constraint FK_appointment_doctor_collegiate foreign key(doctor_collegiate) references Doctor(collegiate),
     constraint FK_appointment_client_id foreign key(client_id) references Customer(id),
-    constraint FK_appointment_hospital_name foreign key(hospital_name) references Hospital(name),
+    constraint FK_appointment_hospital_name foreign key(hospital_name) references Hospital(name)
 );
