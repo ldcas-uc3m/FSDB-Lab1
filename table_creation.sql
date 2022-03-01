@@ -8,6 +8,7 @@ drop table Appointment;
 drop table Contract;
 drop table Product;
 drop table Concert;
+drop table Doctor_Hospital;
 drop table Doctor_Specialty;
 drop table Hospital_Specialty;
 drop table Doctor;
