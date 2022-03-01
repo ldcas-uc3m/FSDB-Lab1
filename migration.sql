@@ -15,9 +15,10 @@ insert into Insurance_Company
 
 
 -- Hospital
+INSERT into hospital
 SELECT DISTINCT hospital, NULL, address_hospital, address_emergency, town_hospital, country_hospital, ZIP_hospital, phone_hospital
 FROM fsdb.doctors
-WHERE hospital is not null and address_hospital is not null and address_emergency is not null and town_hospital is not null and  country_hospital is not null and ZIP_hospital is not null and phone_hospital is not null;
+WHERE hospital is not null and address_hospital is not null and town_hospital is not null and  country_hospital is not null and ZIP_hospital is not null and phone_hospital is not null;
 
 
 
