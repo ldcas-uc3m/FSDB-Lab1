@@ -1,4 +1,4 @@
-set echo off
+--set echo off
 clear screen
 
 
@@ -6,6 +6,7 @@ clear screen
 insert into Specialty
   select distinct specialty, desc_specialty
   from fsdb.doctors where specialty is not null and desc_specialty is not null;
+
 
 -- Insurance_Company -no funciona porque patata (ORA-01722)
 insert into Insurance_Company 
@@ -38,17 +39,16 @@ select * from fsdb.clients
 where passport = '69100500-J';
 */
 
+
 -- Doctor (EN REVISON) ---
 insert into Doctor
 select distinct collegiateNum, phoneNum, name, surname1, surname2, passport, hospital
 from fsdb.doctors
 where collegiateNum is not null and phoneNum is not null and name is not null and surname1 is not null and passport is not null;
 
--- Doctor_Specialty (EN REVISON) ---
-insert into Doctor
-select distinct collegiateNum, phoneNum, name, surname1, surname2, passport, hospital
-from fsdb.doctors
-where collegiateNum is not null and phoneNum is not null and name is not null and surname1 is not null and passport is not null;
+
+-- Doctor_Hospital (TODO) ---
+
 
 
 -- Hospital_Specialty
@@ -64,11 +64,13 @@ insert into Doctor_Specialty
   from fsdb.doctors
   where collegiateNum is not null and specialty is not null;
 
+
 -- Concert
 insert into Concert
   select distinct taxID_insurer, hospital, start_date, end_date 
   from fsdb.contracts
   where taxID_insurer is not null and hospital is not null and start_date is not null;
+
 
 -- Product 
 insert into product
@@ -76,8 +78,8 @@ select distinct product, cif_insurer, version
   from fsdb.clients
   where product is not null and cif_insurer is not null and version is not null ; 
 
--- Product_Coverages
 
+-- Product_Coverages
 insert into Product_coverages
   SELECT DISTINCT
     fsdb.coverages.product,
@@ -106,11 +108,11 @@ ORDER BY
     "Max_LAUNCH";
 
 
--- Contract
+-- Contract (EN REVISIÓN)
 insert into Contract
   select distinct passport, product,  cif_insurer, version, contracted, duration
   from fsdb.clients where product is not null and cif_insurer is not null and duration is not null and contracted is not null and  passport != '69100500-J';
 
 
--- Appointment
+-- Appointment (TODO) ---
 
