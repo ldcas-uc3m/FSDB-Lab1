@@ -14,12 +14,11 @@ insert into Insurance_Company
   where taxID_insurer is not null and insurer is not null and address_insurer is not null and town_insurer is not null and ZIP_insurer is not null and phone_insurer is not null and email_insurer is not null and web_insurer is not null;
 
 
--- Hospital
-INSERT into hospital
-SELECT DISTINCT hospital, NULL, address_hospital, address_emergency, town_hospital, country_hospital, ZIP_hospital, phone_hospital
+-- Hospital 
+INSERT INTO Hospital 
+SELECT DISTINCT hospital, null, address_hospital, address_emergency, town_hospital, country_hospital, ZIP_hospital, phone_hospital
 FROM fsdb.doctors
 WHERE hospital is not null and address_hospital is not null and town_hospital is not null and  country_hospital is not null and ZIP_hospital is not null and phone_hospital is not null;
-
 
 
 -- Customer -
@@ -39,20 +38,27 @@ select * from fsdb.clients
 where passport = '69100500-J';
 */
 
--- Doctor
+-- Doctor (EN REVISON) ---
+insert into Doctor
+select distinct collegiateNum, phoneNum, name, surname1, surname2, passport, hospital
+from fsdb.doctors
+where collegiateNum is not null and phoneNum is not null and name is not null and surname1 is not null and passport is not null;
 
+-- Doctor_Specialty (EN REVISON) ---
+insert into Doctor
+select distinct collegiateNum, phoneNum, name, surname1, surname2, passport, hospital
+from fsdb.doctors
+where collegiateNum is not null and phoneNum is not null and name is not null and surname1 is not null and passport is not null;
 
 
 -- Hospital_Specialty
-/*
-no hay ciff de hospital f 
 INSERT INTO Hospital_Specialty
-select distinct "hcif", specialty
-from fsdb doctors;
-WHERE CIF is not null and speciality is not null;
-*/
+select distinct hospital, specialty
+from fsdb.doctors
+where hospital is not null and specialty is not null;
 
--- Doctor_Specialty
+
+-- Doctor_Specialty (EN REVISION) ---
 insert into Doctor_Specialty
   select distinct collegiateNum, specialty
   from fsdb.doctors
@@ -60,23 +66,51 @@ insert into Doctor_Specialty
 
 -- Concert
 insert into Concert
-  select distinct taxID_insurer, xx, launch, retired, 
-  from fsdb.coverages
-  where taxID_insurer is not null and launch is not null and retired is not null;
+  select distinct taxID_insurer, hospital, start_date, end_date 
+  from fsdb.contracts
+  where taxID_insurer is not null and hospital is not null and start_date is not null;
 
--- Product
-insert into Product
-  select distinct product, coverage, waiting_period, to_date(retired,'DD/MM/YYYY'), version, to_date(launch, 'DD/MM/YYYY')
-  from fsdb.coverages
-  where product is not null and coverage is not null and waiting_period is not null; 
+-- Product 
+insert into product
+select distinct product, cif_insurer, version
+  from fsdb.clients
+  where product is not null and cif_insurer is not null and version is not null ; 
+
+-- Product_Coverages
+
+insert into Product_coverages
+  SELECT DISTINCT
+    fsdb.coverages.product,
+    fsdb.coverages.coverage,
+    MAX(fsdb.coverages.waiting_period) AS "Max_WAITING_PERIOD",
+    fsdb.coverages.taxid_insurer,
+    MAX(CAST(fsdb.coverages.launch AS DATE)) AS "Max_LAUNCH",
+    fsdb.coverages.retired
+FROM
+    fsdb.coverages
+WHERE
+    fsdb.coverages.product IS NOT NULL
+    AND fsdb.coverages.taxid_insurer IS NOT NULL
+    AND fsdb.coverages.coverage IS NOT NULL
+    AND fsdb.coverages.version IS NOT NULL
+GROUP BY
+    fsdb.coverages.product,
+    fsdb.coverages.taxid_insurer,
+    fsdb.coverages.coverage,
+    fsdb.coverages.version,
+    fsdb.coverages.retired
+ORDER BY
+    fsdb.coverages.product,
+    fsdb.coverages.coverage,
+    "Max_WAITING_PERIOD",
+    "Max_LAUNCH";
 
 
 -- Contract
 insert into Contract
-  select distinct passport, product,  specialty?, contracted, duration, end_date?, number_of_people?
-  from fsdb.clients where passport is not null join 
-
-
+  select distinct passport, product,  cif_insurer, version, contracted, duration
+  from fsdb.clients where product is not null and cif_insurer is not null and duration is not null and contracted is not null and  passport != '69100500-J';
 
 
 -- Appointment
+
