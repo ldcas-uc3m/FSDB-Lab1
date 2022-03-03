@@ -51,7 +51,7 @@ where collegiateNum is not null and phoneNum is not null and name is not null an
 
 
 
--- Hospital_Specialty
+-- Hospital_Specialty (REVISAR) --
 INSERT INTO Hospital_Specialty
 select distinct hospital, specialty
 from fsdb.doctors
