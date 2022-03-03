@@ -1,4 +1,4 @@
--- set echo off
+set echo off
 clear screen
 
 
@@ -143,13 +143,13 @@ create table Product (
 
 create table Product_Coverages (
     product_name varchar2(50),
-    specialty_name varchar2(50), 
-    wait_period varchar2(12) not null,
     company_cif varchar2(10),
+    specialty_name varchar2(50),
+    wait_period varchar2(12) not null,
     launch varchar2(10) not null,
     retired varchar2(10),
-    constraint PK_product_coverages primary key(product_name, specialty, launch, company_cif),
-    constraint FK_product_coverages_product_name foreign key(product_name) references Product(name) on delete cascade,
+    constraint PK_product_coverages primary key(product_name, specialty_name, launch, company_cif),
+    constraint FK_product_coverages_product_name foreign key(product_name, company_cif) references Product(name, company_cif) on delete cascade,
     constraint FK_product_coverages_company_cif foreign key(company_cif) references Insurance_Company(cif) on delete cascade,
     constraint FK_product_coverages_specialty_name foreign key(specialty_name) references Specialty(name) on delete cascade,
     constraint CH_product_coverages_ check(retired > launch)
