@@ -55,10 +55,12 @@ create table Hospital (
     city varchar2(35) not null,
     country varchar2(50) not null,
     zip number(5) not null,
-    telephone varchar2(14) not null,
+    telephone number(9) not null,
     constraint PK_hospital primary key(name),
     constraint UK_hospital_cif unique(cif),
-    constraint UK_hospital_main_entrance unique(main_entrance)
+    constraint UK_hospital_main_entrance unique(main_entrance),
+    constraint CH_hospital_telephone check(telephone > 0),
+    constraint CH_hospital_zip check(zip > 0)
 );
 
 
@@ -76,7 +78,7 @@ create table Customer (
 
 create table Doctor (
     collegiate varchar2(12) not null,
-    locator varchar2(14) not null,
+    locator number(9),
     name varchar2(40) not null,
     surname1 varchar2(25) not null,
     surname2 varchar2(25),
@@ -85,7 +87,8 @@ create table Doctor (
     constraint PK_doctor primary key(collegiate),
     constraint UK_doctor_locator unique(locator),
     constraint UK_doctor_id unique(id),
-    constraint FK_doctor_hospital_name foreign key(hospital_name) references Hospital(name)
+    constraint FK_doctor_hospital_name foreign key(hospital_name) references Hospital(name),
+    constraint CH_doctor_locator check(locator > 0)
 );
 
 
@@ -123,8 +126,10 @@ create table Concert (
     end_date varchar2(10),    
     constraint PK_concert primary key(insurance_cif, hospital_name, start_date),
     constraint FK_concert_insurance_cif foreign key(insurance_cif) references Insurance_Company(cif),
-    constraint FK_concert_hospital_name foreign key(hospital_name) references Hospital(name)
+    constraint FK_concert_hospital_name foreign key(hospital_name) references Hospital(name),
+    constraint CH_concert_date check(end_date > start_date)
 );
+
 
 create table Product (
     name varchar2(50),
@@ -137,15 +142,17 @@ create table Product (
 
 
 create table Product_Coverages (
-    name varchar2(50),
-    specialty varchar2(50), 
+    product_name varchar2(50),
+    specialty_name varchar2(50), 
     wait_period varchar2(12) not null,
     company_cif varchar2(10),
     launch varchar2(10) not null,
     retired varchar2(10),
-    constraint PK_product_coverage primary key(name, specialty, launch, company_cif),
-    constraint FK_product_coverage_company_cif foreign key(company_cif) references Insurance_Company(cif) on delete cascade,
-    constraint FK_product_coverage foreign key(specialty) references Specialty(name) on delete cascade
+    constraint PK_product_coverages primary key(product_name, specialty, launch, company_cif),
+    constraint FK_product_coverages_product_name foreign key(product_name) references Product(name) on delete cascade,
+    constraint FK_product_coverages_company_cif foreign key(company_cif) references Insurance_Company(cif) on delete cascade,
+    constraint FK_product_coverages_specialty_name foreign key(specialty_name) references Specialty(name) on delete cascade,
+    constraint CH_product_coverages_ check(retired > launch)
 );
 
 
@@ -156,9 +163,10 @@ create table Contract (
     start_date date not null,
     duration number(4) not null,
     end_date date not null,
-    constraint PK_Contract primary key(customer_id, product_name, company_cif),
+    constraint PK_contract primary key(customer_id, product_name, company_cif),
     constraint FK_contract_customer_id foreign key(customer_id) references Customer(id) on delete cascade,
-    constraint FK_contract_product_name foreign key(product_name, company_cif) references Product(name, company_cif) on delete cascade
+    constraint FK_contract_product_name foreign key(product_name, company_cif) references Product(name, company_cif) on delete cascade,
+    constraint CH_contract_date check(end_date > start_date)
 );
 
 
