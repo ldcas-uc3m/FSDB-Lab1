@@ -31,13 +31,13 @@ create table Specialty (
 
 create table Insurance_Company (
     cif varchar2(9),
-    name varchar2(40) not null,
+    name varchar2(50) not null,
     address varchar2(50) not null,
     city varchar2(35) not null,
     zip number(5) not null,
     telephone varchar2(14) not null,
-    email varchar2(30) not null,
-    url varchar2(30) not null,
+    email varchar2(60) not null,
+    url varchar2(60) not null,
     constraint PK_insurance_company primary key(cif),
     constraint UK_insurance_company_name unique(name),
     constraint UK_insurance_company_address unique(address),
@@ -52,14 +52,13 @@ create table Hospital (
     cif varchar2(9),
     main_entrance varchar2(50) not null,
     emergency_entrance varchar2(50),
-    city varchar2(35) not null,
+    city varchar2(50) not null,
     country varchar2(50) not null,
     zip number(5) not null,
     telephone varchar2(14) not null,
     constraint PK_hospital primary key(name),
     constraint UK_hospital_cif unique(cif),
     constraint UK_hospital_main_entrance unique(main_entrance),
-    constraint CH_hospital_telephone check(telephone > 0),
     constraint CH_hospital_zip check(zip > 0)
 );
 
@@ -119,8 +118,8 @@ create table Doctor_Specialty (
 create table Concert (
     insurance_cif varchar2(9),
     hospital_name varchar2(50),
-    start_date varchar2(10),
-    end_date varchar2(10),
+    start_date date,
+    end_date date,
     constraint PK_concert primary key(insurance_cif, hospital_name, start_date),
     constraint FK_concert_insurance_cif foreign key(insurance_cif) references Insurance_Company(cif),
     constraint FK_concert_hospital_name foreign key(hospital_name) references Hospital(name),
@@ -142,14 +141,14 @@ create table Product_Coverages (
     product_name varchar2(50),
     company_cif varchar2(9),
     specialty_name varchar2(50),
-    wait_period varchar2(12) not null,
-    launch varchar2(10) not null,
-    retired varchar2(10),
+    wait_period number(3) not null,
+    launch date not null,
+    retired date,
     constraint PK_product_coverages primary key(product_name, specialty_name, launch, company_cif),
     constraint FK_product_coverages_product_name foreign key(product_name, company_cif) references Product(name, company_cif) on delete cascade,
     constraint FK_product_coverages_company_cif foreign key(company_cif) references Insurance_Company(cif) on delete cascade,
     constraint FK_product_coverages_specialty_name foreign key(specialty_name) references Specialty(name) on delete cascade,
-    constraint CH_product_coverages_ check(retired > launch)
+    constraint CH_product_coverages_retired check(retired is not null or retired > launch)
 );
 
 
@@ -163,7 +162,7 @@ create table Contract (
     constraint PK_contract primary key(customer_id, product_name, company_cif),
     constraint FK_contract_customer_id foreign key(customer_id) references Customer(id) on delete cascade,
     constraint FK_contract_product_name foreign key(product_name, company_cif) references Product(name, company_cif) on delete cascade,
-    constraint CH_contract_date check(end_date is not null or end_date > start_date)
+    constraint CH_contract_date check(end_date > start_date)
 );
 
 
