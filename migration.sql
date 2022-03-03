@@ -22,7 +22,7 @@ FROM fsdb.doctors
 WHERE hospital is not null and address_hospital is not null and town_hospital is not null and  country_hospital is not null and ZIP_hospital is not null and phone_hospital is not null;
 
 
--- Customer -
+-- Customer
 insert into Customer
   select distinct passport, name, surname1, surname2, gender, email
   from fsdb.clients
@@ -114,5 +114,6 @@ insert into Contract
   from fsdb.clients where product is not null and cif_insurer is not null and duration is not null and contracted is not null and  passport != '69100500-J';
 
 
--- Appointment (TODO) ---
+-- Appointment
+-- this table is empty, as it's a new functionality
 
