@@ -125,20 +125,19 @@ create table Concert (
     constraint FK_Concert_hospital_name foreign key(hospital_name) references Hospital(name),
     constraint CH_Concert_date check(end_date is not null or end_date > start_date)
 );
-
-
+-- 1 active; 0 inactive
 create table Product (
     name varchar2(50),
     company_cif varchar2(10),
     version number(4,2) not null,
     launch date not null,
     retired date,
-    active boolean not null,
+    active number(1) not null,
     constraint PK_Product primary key(name, company_cif, version),
     constraint FK_Product_company_cif foreign key(company_cif) references Insurance_Company(cif),
     constraint CH_Product_version check(version >= 0),
     constraint CH_Product_retired check(retired is not null or retired > launch),
-    constraint CH_Product_active check((retired is not null and active is False) or (retired is null and active is not True))
+    constraint CH_Product_active check((retired is not null and active != 0) or (retired is null and active = 0))
 );
 
 
@@ -148,8 +147,9 @@ create table Product_Coverages (
     product_version number(4,2),
     specialty_name varchar2(50),
     wait_period varchar2(12) not null,
+    launch varchar2(10), 
     constraint PK_Product_Coverages primary key(product_name, company_cif, product_version, specialty_name, launch),
-    constraint FK_Product_Coverages_product_name foreign key(product_name, company_cif, product_version) references Product(name, company_cif, product_version) on delete cascade,
+    constraint FK_Product_Coverages_product_name foreign key(product_name, company_cif, product_version) references Product(name, company_cif, version) on delete cascade
 );
 
 
@@ -159,10 +159,11 @@ create table Contract (
     company_cif varchar2(9),
     start_date date not null,
     duration number(4) not null,
+    product_version number(4,2) not null,
     end_date date not null,
     constraint PK_Contract primary key(customer_id, product_name, company_cif),
     constraint FK_Contract_customer_id foreign key(customer_id) references Customer(id) on delete cascade,
-    constraint FK_Contract_product_name foreign key(product_name, company_cif) references Product(name, company_cif) on delete cascade,
+    constraint FK_Contract_product_name foreign key(product_name, company_cif, product_version) references Product(name, company_cif, version) on delete cascade,
     constraint CH_Contract_date check(end_date > start_date)
 );
 
@@ -178,3 +179,5 @@ create table Appointment (
     constraint FK_Appointment_client_id foreign key(client_id) references Customer(id),
     constraint FK_Appointment_hospital_name foreign key(hospital_name) references Hospital(name)
 );
+
+
