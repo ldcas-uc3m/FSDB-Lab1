@@ -72,7 +72,7 @@ fsdb.coverages
 Name                     Null?    Type
 ------------------------ -------- -------------
 product                           VARCHAR2(50)
-version                           NUMBER(4,2)
+version                           VARCHAR2(5)
 launch                            VARCHAR2(10)
 retired                           VARCHAR2(10)
 coverage                          VARCHAR2(50)
