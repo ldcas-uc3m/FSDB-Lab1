@@ -162,12 +162,17 @@ insert into Concert
 ;
 
 
--- Product -- no funciona porque patata (ORA-00001: restriccion unica (FSDB254.PK_PRODUCT) violada)
+-- Product (REVISAR)
 insert into Product
   select distinct
     product,
     taxID_insurer,
-    to_number(version, '9.99')
+    to_number(version, '9.99'),
+    CAST(launch as date),
+    CAST(retired as date),
+    if retired is not null
+      then True
+      else False
   from fsdb.coverages
   where
     product is not null
@@ -186,18 +191,17 @@ select distinct product, taxid_insurer, coverage, launch from fsdb.coverages
 insert into Product_Coverages
   select distinct
     product,
-    taxid_insurer,
+    taxID_insurer,
+    version,
     coverage,
     waiting_period,
-    CAST(launch as date) la,
-    retired
   from fsdb.coverages
   where
     product is not null
-    and taxid_insurer is not null
-    and coverage is not null
+    and taxID_insurer is not null
     and version is not null
-  order by product, coverage, la
+    and coverage is not null
+    and verswaiting_periodion is not null
 ;
 
 

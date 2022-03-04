@@ -131,22 +131,25 @@ create table Product (
     name varchar2(50),
     company_cif varchar2(10),
     version number(4,2) not null,
-    constraint PK_Product primary key(name, company_cif),
+    launch date not null,
+    retired date,
+    active boolean not null,
+    constraint PK_Product primary key(name, company_cif, version),
     constraint FK_Product_company_cif foreign key(company_cif) references Insurance_Company(cif),
-    constraint CH_Product_version check(version >= 0)
+    constraint CH_Product_version check(version >= 0),
+    constraint CH_Product_retired check(retired is not null or retired > launch),
+    constraint CH_Product_active check((retired is not null and active is False) or (retired is null and active is not True))
 );
 
 
 create table Product_Coverages (
     product_name varchar2(50),
     company_cif varchar2(9),
+    product_version number(4,2),
     specialty_name varchar2(50),
     wait_period varchar2(12) not null,
-    launch date not null,
-    retired date,
-    constraint PK_Product_Coverages primary key(product_name, company_cif, specialty_name, launch),
-    constraint FK_Product_Coverages_product_name foreign key(product_name, company_cif) references Product(name, company_cif) on delete cascade,
-    constraint CH_Product_Coverages_retired check(retired is not null or retired > launch)
+    constraint PK_Product_Coverages primary key(product_name, company_cif, product_version, specialty_name, launch),
+    constraint FK_Product_Coverages_product_name foreign key(product_name, company_cif, product_version) references Product(name, company_cif, product_version) on delete cascade,
 );
 
 
