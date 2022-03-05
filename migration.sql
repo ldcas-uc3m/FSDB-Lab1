@@ -1,4 +1,4 @@
---set echo off
+set echo off
 clear screen
 
 
@@ -165,62 +165,78 @@ insert into Concert
 -- Product 
 insert into Product
    SELECT DISTINCT
-    fsdb.coverages.product,
-    fsdb.coverages.taxid_insurer,
-    to_number(fsdb.coverages.version, '9.99') ,
-    MAX(CAST(fsdb.coverages.launch AS DATE)) AS "Max_LAUNCH",
-    fsdb.coverages.retired,
+    product,
+    taxid_insurer,
+    to_number(version, '9.99'),
+    MAX(CAST(launch AS DATE)) AS "Max_LAUNCH",
+    retired,
     case
 	when retired is not null then 0
         when retired is null then 1
     end
-FROM
-    fsdb.coverages
-WHERE
-    fsdb.coverages.product IS NOT NULL
-    AND fsdb.coverages.taxid_insurer IS NOT NULL
-    AND fsdb.coverages.version IS NOT NULL
-GROUP BY
-    fsdb.coverages.product,
-    fsdb.coverages.taxid_insurer,
-    fsdb.coverages.version,
-    fsdb.coverages.retired
-ORDER BY
-    fsdb.coverages.product,
-    "Max_LAUNCH";
-
-
-
-/*
-select distinct product, taxid_insurer, coverage, launch from fsdb.coverages
- group by product, taxid_insurer, coverage, launch having count('x')>1
- order by product;
-*/
-
--- Product_Coverages (REVISAR)
-insert into Product_Coverages
-  select distinct
-    product,
-    taxID_insurer,
-    version,
-    coverage,
-    waiting_period,
-  from fsdb.coverages
+  from
+      fsdb.coverages
   where
-    product is not null
-    and taxID_insurer is not null
-    and version is not null
-    and coverage is not null
-    and verswaiting_periodion is not null
+      product IS NOT NULL
+      and taxid_insurer IS NOT NULL
+      and version IS NOT NULL
+  group by
+      product,
+      taxid_insurer,
+      version,
+      retired
+  order by
+      product,
+      "Max_LAUNCH"
 ;
 
 
--- Contract (TESTEAR)
+
+-- Product_Coverages
+insert into Product_coverages
+  select distinct
+    product,
+    taxid_insurer,
+    to_number(version, '9.99'),
+    coverage,
+    max_w_period
+  from (
+    select distinct
+      product,
+      coverage,
+      MAX(waiting_period) as max_w_period,
+      taxid_insurer,
+      MAX(CAST(launch as date)) as Max_LAUNCH,
+      retired,
+      version
+  FROM
+      fsdb.coverages
+  WHERE
+      product IS NOT NULL
+      AND taxid_insurer IS NOT NULL
+      AND coverage IS NOT NULL
+      AND version IS NOT NULL
+  GROUP BY
+      product,
+      taxid_insurer,
+      coverage,
+      version,
+      retired
+  ORDER BY
+      product,
+      coverage,
+      max_w_period,
+      Max_LAUNCH)
+;
+
+
+-- Contract (REVISAR)
 insert into Contract
   select distinct
     passport,
     product,
     cif_insurer,
+    version,
     to_date(contracted, 'DD/MM/YY'),
     duration,
     to_date(contracted, 'DD/MM/YY') + duration
@@ -228,6 +244,7 @@ insert into Contract
   where 
     product is not null 
     and cif_insurer is not null 
+    and version is not null
     and duration is not null 
     and contracted is not null
     and passport != '69100500-J'
@@ -236,4 +253,3 @@ insert into Contract
 
 -- Appointment
 -- this table is empty, as it's a new functionality
-

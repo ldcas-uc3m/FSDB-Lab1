@@ -148,8 +148,7 @@ create table Product_Coverages (
     product_version number(4,2),
     specialty_name varchar2(50),
     wait_period varchar2(12) not null,
-    launch varchar2(10), 
-    constraint PK_Product_Coverages primary key(product_name, company_cif, product_version, specialty_name, launch),
+    constraint PK_Product_Coverages primary key(product_name, company_cif, product_version, specialty_name),
     constraint FK_Product_Coverages_product_name foreign key(product_name, company_cif, product_version) references Product(name, company_cif, version) on delete cascade
 );
 
@@ -158,11 +157,11 @@ create table Contract (
     customer_id varchar2(15),
     product_name varchar2(50),
     company_cif varchar2(9),
+    product_version number(4,2) not null,
     start_date date not null,
     duration number(4) not null,
-    product_version number(4,2) not null,
     end_date date not null,
-    constraint PK_Contract primary key(customer_id, product_name, company_cif),
+    constraint PK_Contract primary key(customer_id, product_name, company_cif, product_version),
     constraint FK_Contract_customer_id foreign key(customer_id) references Customer(id) on delete cascade,
     constraint FK_Contract_product_name foreign key(product_name, company_cif, product_version) references Product(name, company_cif, version) on delete cascade,
     constraint CH_Contract_date check(end_date > start_date)
