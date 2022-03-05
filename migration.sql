@@ -120,7 +120,8 @@ insert into Doctor_Hospital
   from fsdb.doctors
   where
     collegiateNum is not null
-    and hospital is not null;
+    and hospital is not null
+;
 
 
 -- Hospital_Specialty
@@ -164,32 +165,30 @@ insert into Concert
 
 -- Product 
 insert into Product
-   SELECT DISTINCT
+  select distinct
     product,
     taxid_insurer,
     to_number(version, '9.99'),
-    MAX(CAST(launch AS DATE)) AS "Max_LAUNCH",
+    max(CAST(launch AS DATE)) AS max_launch,
     retired,
     case
-	when retired is not null then 0
-        when retired is null then 1
+	    when retired is not null then 0
+      when retired is null then 1
     end
-  from
-      fsdb.coverages
+  from fsdb.coverages
   where
-      product IS NOT NULL
-      and taxid_insurer IS NOT NULL
-      and version IS NOT NULL
+    product is not null
+    and taxid_insurer is not null
+    and version is not null
   group by
-      product,
-      taxid_insurer,
-      version,
-      retired
+    product,
+    taxid_insurer,
+    version,
+    retired
   order by
-      product,
-      "Max_LAUNCH"
+    product,
+    max_launch
 ;
-
 
 
 -- Product_Coverages
@@ -206,31 +205,31 @@ insert into Product_coverages
       coverage,
       MAX(waiting_period) as max_w_period,
       taxid_insurer,
-      MAX(CAST(launch as date)) as Max_LAUNCH,
+      MAX(CAST(launch as date)) as max_launch,
       retired,
       version
-  FROM
-      fsdb.coverages
-  WHERE
-      product IS NOT NULL
-      AND taxid_insurer IS NOT NULL
-      AND coverage IS NOT NULL
-      AND version IS NOT NULL
-  GROUP BY
+    from fsdb.coverages
+    where
+      product is not null
+      and taxid_insurer is not null
+      and coverage is not null
+      and version is not null
+    group by
       product,
       taxid_insurer,
       coverage,
       version,
       retired
-  ORDER BY
+    order by
       product,
       coverage,
       max_w_period,
-      Max_LAUNCH)
+      max_launch
+  )
 ;
 
 
--- Contract (REVISAR)
+-- Contract
 insert into Contract
   select distinct
     passport,
@@ -242,12 +241,15 @@ insert into Contract
     to_date(contracted, 'DD/MM/YY') + duration
   from fsdb.clients
   where 
-    product is not null 
+    passport is not null
+    and product is not null
     and cif_insurer is not null 
     and version is not null
     and duration is not null 
     and contracted is not null
     and passport != '69100500-J'
+    and to_date(contracted, 'DD/MM/YY') + duration > sysdate
+    and (product, cif_insurer, version) in (select name, company_cif, version from Product)
 ;
 
 

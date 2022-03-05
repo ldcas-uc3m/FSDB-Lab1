@@ -127,14 +127,13 @@ create table Concert (
 );
 
 
--- 1 active; 0 inactive
 create table Product (
     name varchar2(50),
     company_cif varchar2(10),
     version number(4,2) not null,
     launch date not null,
     retired date,
-    active number(1) not null, 
+    active number(1) not null, -- 1 active; 0 inactive
     constraint PK_Product primary key(name, company_cif, version),
     constraint FK_Product_Company foreign key(company_cif) references Insurance_Company(cif),
     constraint CH_Product_version check(version >= 0),
