@@ -162,23 +162,33 @@ insert into Concert
 ;
 
 
--- Product (REVISAR)
+-- Product 
 insert into Product
-  select distinct
-    product,
-    taxID_insurer,
-    to_number(version, '9.99'),
-    CAST(launch as date),
-    CAST(retired as date),
-    if retired is not null
-      then True
-      else False
-  from fsdb.coverages
-  where
-    product is not null
-    and taxID_insurer is not null
-    and version is not null
-;
+   SELECT DISTINCT
+    fsdb.coverages.product,
+    fsdb.coverages.taxid_insurer,
+    to_number(fsdb.coverages.version, '9.99') ,
+    MAX(CAST(fsdb.coverages.launch AS DATE)) AS "Max_LAUNCH",
+    fsdb.coverages.retired,
+    case
+	when retired is not null then 0
+        when retired is null then 1
+    end
+FROM
+    fsdb.coverages
+WHERE
+    fsdb.coverages.product IS NOT NULL
+    AND fsdb.coverages.taxid_insurer IS NOT NULL
+    AND fsdb.coverages.version IS NOT NULL
+GROUP BY
+    fsdb.coverages.product,
+    fsdb.coverages.taxid_insurer,
+    fsdb.coverages.version,
+    fsdb.coverages.retired
+ORDER BY
+    fsdb.coverages.product,
+    "Max_LAUNCH";
+
 
 
 /*
