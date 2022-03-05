@@ -92,8 +92,8 @@ create table Doctor_Hospital (
     doctor_collegiate varchar2(12),
     hospital_name varchar2(50),
     constraint PK_Doctor_Hospital primary key(doctor_collegiate, hospital_name),
-    constraint FK_Doctor_Hospital_doctor_collegiate foreign key(doctor_collegiate) references Doctor(collegiate) on delete cascade,
-    constraint FK_Doctor_Hospital_hospital_name foreign key(hospital_name) references Hospital(name) on delete cascade
+    constraint FK_Doctor_Hospital_Doctor foreign key(doctor_collegiate) references Doctor(collegiate) on delete cascade,
+    constraint FK_Doctor_Hospital_Hospital foreign key(hospital_name) references Hospital(name) on delete cascade
 );
 
 
@@ -101,8 +101,8 @@ create table Hospital_Specialty (
     hospital_name varchar2(50),
     specialty_name varchar2(50),
     constraint PK_Hospital_Specialty primary key(hospital_name, specialty_name),
-    constraint FK_Hospital_Specialty_hospital_name foreign key(hospital_name) references Hospital(name) on delete cascade,
-    constraint FK_Hospital_Specialty_specialty_name foreign key(specialty_name) references Specialty(name) on delete cascade
+    constraint FK_Hospital_Specialty_Hospital foreign key(hospital_name) references Hospital(name) on delete cascade,
+    constraint FK_Hospital_Specialty_Specialty foreign key(specialty_name) references Specialty(name) on delete cascade
 );
 
 
@@ -110,8 +110,8 @@ create table Doctor_Specialty (
     doctor_collegiate varchar2(12),
     specialty_name varchar2(50),
     constraint PK_Doctor_Specialty primary key(doctor_collegiate, specialty_name),
-    constraint FK_Doctor_Specialty_doctor_name foreign key(doctor_collegiate) references Doctor(collegiate) on delete cascade,
-    constraint FK_Doctor_Specialty_specialty_name foreign key(specialty_name) references Specialty(name) on delete cascade
+    constraint FK_Doctor_Specialty_Doctor foreign key(doctor_collegiate) references Doctor(collegiate) on delete cascade,
+    constraint FK_Doctor_Specialty_Specialty foreign key(specialty_name) references Specialty(name) on delete cascade
 );
 
 
@@ -121,10 +121,11 @@ create table Concert (
     start_date date,
     end_date date,
     constraint PK_Concert primary key(insurance_cif, hospital_name, start_date),
-    constraint FK_Concert_insurance_cif foreign key(insurance_cif) references Insurance_Company(cif),
-    constraint FK_Concert_hospital_name foreign key(hospital_name) references Hospital(name),
+    constraint FK_Concert_Insurance_Company foreign key(insurance_cif) references Insurance_Company(cif),
+    constraint FK_Concert_Hospital foreign key(hospital_name) references Hospital(name),
     constraint CH_Concert_date check(end_date is not null or end_date > start_date)
 );
+
 
 -- 1 active; 0 inactive
 create table Product (
@@ -133,9 +134,9 @@ create table Product (
     version number(4,2) not null,
     launch date not null,
     retired date,
-    active number(1) not null,
+    active number(1) not null, 
     constraint PK_Product primary key(name, company_cif, version),
-    constraint FK_Product_company_cif foreign key(company_cif) references Insurance_Company(cif),
+    constraint FK_Product_Company foreign key(company_cif) references Insurance_Company(cif),
     constraint CH_Product_version check(version >= 0),
     constraint CH_Product_retired check(retired is not null or retired > launch),
     constraint CH_Product_active check((retired is not null and active = 0) or (retired is null and active = 1))
@@ -149,7 +150,7 @@ create table Product_Coverages (
     specialty_name varchar2(50),
     wait_period varchar2(12) not null,
     constraint PK_Product_Coverages primary key(product_name, company_cif, product_version, specialty_name),
-    constraint FK_Product_Coverages_product_name foreign key(product_name, company_cif, product_version) references Product(name, company_cif, version) on delete cascade
+    constraint FK_Product_Coverages_Product foreign key(product_name, company_cif, product_version) references Product(name, company_cif, version) on delete cascade
 );
 
 
@@ -162,8 +163,8 @@ create table Contract (
     duration number(4) not null,
     end_date date not null,
     constraint PK_Contract primary key(customer_id, product_name, company_cif, product_version),
-    constraint FK_Contract_customer_id foreign key(customer_id) references Customer(id) on delete cascade,
-    constraint FK_Contract_product_name foreign key(product_name, company_cif, product_version) references Product(name, company_cif, version) on delete cascade,
+    constraint FK_Contract_Customer foreign key(customer_id) references Customer(id) on delete cascade,
+    constraint FK_Contract_Product foreign key(product_name, company_cif, product_version) references Product(name, company_cif, version) on delete cascade,
     constraint CH_Contract_date check(start_date + duration = end_date)
 );
 
@@ -175,9 +176,9 @@ create table Appointment (
     hospital_name varchar2(50),
     specialty_name varchar2(50),
     constraint PK_Appointment primary key(doctor_collegiate, client_id, appointment_date, hospital_name, specialty_name),
-    constraint FK_Appointment_doctor_collegiate foreign key(doctor_collegiate) references Doctor(collegiate),
-    constraint FK_Appointment_client_id foreign key(client_id) references Customer(id),
-    constraint FK_Appointment_hospital_name foreign key(hospital_name) references Hospital(name)
+    constraint FK_Appointment_Doctor foreign key(doctor_collegiate) references Doctor(collegiate),
+    constraint FK_Appointment_Client foreign key(client_id) references Customer(id),
+    constraint FK_Appointment_Hospital foreign key(hospital_name) references Hospital(name)
 );
 
 
