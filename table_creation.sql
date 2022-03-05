@@ -164,7 +164,7 @@ create table Contract (
     constraint PK_Contract primary key(customer_id, product_name, company_cif, product_version),
     constraint FK_Contract_customer_id foreign key(customer_id) references Customer(id) on delete cascade,
     constraint FK_Contract_product_name foreign key(product_name, company_cif, product_version) references Product(name, company_cif, version) on delete cascade,
-    constraint CH_Contract_date check(end_date > start_date)
+    constraint CH_Contract_date check(start_date + duration = end_date)
 );
 
 
