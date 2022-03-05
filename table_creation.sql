@@ -125,6 +125,7 @@ create table Concert (
     constraint FK_Concert_hospital_name foreign key(hospital_name) references Hospital(name),
     constraint CH_Concert_date check(end_date is not null or end_date > start_date)
 );
+
 -- 1 active; 0 inactive
 create table Product (
     name varchar2(50),
@@ -137,7 +138,7 @@ create table Product (
     constraint FK_Product_company_cif foreign key(company_cif) references Insurance_Company(cif),
     constraint CH_Product_version check(version >= 0),
     constraint CH_Product_retired check(retired is not null or retired > launch),
-    constraint CH_Product_active check((retired is not null and active != 0) or (retired is null and active = 0))
+    constraint CH_Product_active check((retired is not null and active = 0) or (retired is null and active = 1))
 );
 
 
